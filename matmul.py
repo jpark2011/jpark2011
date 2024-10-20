@@ -36,6 +36,11 @@ def run_benchmark(matrix, matrix_size, device, iter):
     # ops = 2*matrix_size**3
     ops = matrix_size**2*(2*matrix_size-1)
         
+    # warming up
+    warm_iter = 10
+    for _ in range (warm_iter):
+        torch.mm(matrix, matrix).to(device)
+
     if device == 'cuda':
         torch.cuda.synchronize()
     elif device == 'xpu':
@@ -43,12 +48,7 @@ def run_benchmark(matrix, matrix_size, device, iter):
     elif device == 'hpu':
         torch.hpu.synchronize()
 
-    # warming up
-    warm_iter = 3
-    for _ in range (warm_iter):
-        torch.mm(matrix, matrix).to(device)
-
-    # Take a note for start time
+     # Take a note for start time
     start = time.time()
 
     # Begin Multiplication
@@ -72,7 +72,7 @@ def run_benchmark(matrix, matrix_size, device, iter):
 
     # Calculate TFLOPS
     tflops = ops / duration / 10**12
-    print("{:,}x{:,} MM {:,} ops in {:.3f} sec = TFLOPS {:.6f}".format(matrix_size, matrix_size, ops, duration, tflops), flush=True)
+    print("{:,}x{:,} MM {:,} ops in {:.6f} sec = TFLOPS {:.6f}".format(matrix_size, matrix_size, ops, duration, tflops), flush=True)
 
     # Clean-up
     #print("Cleaning-up", flush=True)
@@ -86,7 +86,7 @@ def cmdline_args():
     parser.add_argument("--device", type=str, default='cpu', help='Use device for Benchmark.', choices=['cpu', 'xpu', 'hpu' 'cuda'])
     parser.add_argument("--precision", type=str, default='fp32', help='Data Precision for Benchmark', choices=['int8', 'int16', 'int32', 'int64', 'fp16', 'bf16', 'fp32', 'fp64'])
     # parser.add_argument("--loop", type=bool, default=False, help='Run benchmark infinite times until manually cancelled.', choices=[True, False])
-    parser.add_argument("--iter", type=int, default=10, help='Run benchmark <iter> times until.')
+    parser.add_argument("--iter", type=int, default=20, help='Run benchmark <iter> times.')
     parser.add_argument("--size", type=str, default='128 512', help='List of matrices size separated by comma, e.g., 128 512 1024 2048 4096 8192 16384 32768')
     return(parser.parse_args())
 
