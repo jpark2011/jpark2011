@@ -74,12 +74,6 @@ def run_benchmark(matrix, matrix_size, device, iter):
     tflops = ops / duration / 10**12
     print("{:,}x{:,} MM {:,} ops in {:.6f} sec = TFLOPS {:.6f}".format(matrix_size, matrix_size, ops, duration, tflops), flush=True)
 
-    # Clean-up
-    #print("Cleaning-up", flush=True)
-    if device == 'cuda':
-        torch.cuda.empty_cache()
-    del matrix
-
 def cmdline_args():
     # Make parser object
     parser = argparse.ArgumentParser(description='PyTorch CUDA Matrix Multiplication Benchmark.')
@@ -115,7 +109,12 @@ if __name__ == '__main__':
     for matrix_size in size_list:
         matrix = generate_matrices(matrix_size, args.device, args.precision)
         run_benchmark(matrix, matrix_size, args.device, args.iter)
-    
+        # Clean-up
+        # print("Cleaning-up", flush=True)
+        if args.device == 'cuda':
+            torch.cuda.empty_cache()
+        del matrix
+
     # if (args.loop==False):
     #     break
     
