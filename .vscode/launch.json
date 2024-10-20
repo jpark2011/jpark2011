@@ -11,9 +11,9 @@
             "program": "${workspaceFolder}/matmul.py",
             "console": "integratedTerminal",
             "args": [
-                "--device", "cpu",
+                "--device", "hpu",
                 "--precision", "fp32",
-                "--size", "128, 512"
+                "--size", "128 512"
             ]
         }
     ]

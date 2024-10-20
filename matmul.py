@@ -1,6 +1,10 @@
 import torch
 import time
+import os
 import argparse
+
+# For hpu
+os.environ["PT_HPU_LAZY_MODE"] = "0"
 
 def generate_matrices(matrix_size, device, data_format):
     #print("Generating Random Matrix", flush=True)
@@ -77,10 +81,10 @@ def run_benchmark(matrix, matrix_size, device, iter):
 def cmdline_args():
     # Make parser object
     parser = argparse.ArgumentParser(description='PyTorch CUDA Matrix Multiplication Benchmark.')
-    parser.add_argument("--device", type=str, default='cpu', help='Use device for Benchmark.', choices=['cpu', 'xpu', 'hpu' 'cuda'])
+    parser.add_argument("--device", type=str, default='cpu', help='Use device for Benchmark.', choices=['cpu', 'xpu', 'hpu', 'cuda'])
     parser.add_argument("--precision", type=str, default='fp32', help='Data Precision for Benchmark', choices=['int8', 'int16', 'int32', 'int64', 'fp16', 'bf16', 'fp32', 'fp64'])
     # parser.add_argument("--loop", type=bool, default=False, help='Run benchmark infinite times until manually cancelled.', choices=[True, False])
-    parser.add_argument("--iter", type=int, default=20, help='Run benchmark <iter> times.')
+    parser.add_argument("--iter", type=int, default=1000, help='Run benchmark <iter> times.')
     parser.add_argument("--size", type=str, default='128 512', help='List of matrices size separated by comma, e.g., 128 512 1024 2048 4096 8192 16384 32768')
     return(parser.parse_args())
 
